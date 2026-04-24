@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import { Navbar, Footer } from "@/components/shared";
 import "./globals.css";
 
@@ -65,17 +66,19 @@ export default function RootLayout({
       <body className="font-sans antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <AuthProvider>
           <CartProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <Toaster
-              position="bottom-right"
-              toastOptions={{
-                className:
-                  "!bg-card !text-card-foreground !border !border-border !shadow-lg",
-                duration: 3000,
-              }}
-            />
+            <WishlistProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <Toaster
+                position="bottom-right"
+                toastOptions={{
+                  className:
+                    "!bg-card !text-card-foreground !border !border-border !shadow-lg",
+                  duration: 3000,
+                }}
+              />
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}

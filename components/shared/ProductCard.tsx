@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Star, ShoppingCart, Heart, Zap } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,6 +15,9 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const inWishlist = isInWishlist(product.id);
 
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -49,10 +53,18 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
       {/* Wishlist Button */}
       <button
-        className="absolute top-3 right-3 z-10 p-2 bg-background/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background hover:text-destructive"
-        aria-label="Add to wishlist"
+        onClick={(e) => {
+          e.preventDefault();
+          toggleWishlist(product);
+        }}
+        className={`absolute top-3 right-3 z-10 p-2 rounded-full transition-all duration-300 ${
+          inWishlist
+            ? "bg-background text-destructive opacity-100 shadow-sm"
+            : "bg-background/80 backdrop-blur-sm text-foreground opacity-0 group-hover:opacity-100 hover:bg-background hover:text-destructive"
+        }`}
+        aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
       >
-        <Heart className="w-4 h-4" />
+        <Heart className={`w-4 h-4 transition-transform active:scale-75 ${inWishlist ? "fill-current" : ""}`} />
       </button>
 
       {/* Image */}

@@ -33,17 +33,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addToCart = (product: Product) => {
+    const isExisting = items.some((item) => item.product.id === product.id);
+    if (isExisting) {
+      toast.success("Increased quantity in cart", { id: `cart-${product.id}` });
+    } else {
+      toast.success("Added to cart", { id: `cart-${product.id}` });
+    }
+
     setItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.product.id === product.id);
       if (existingItem) {
-        toast.success("Increased quantity in cart");
         return prevItems.map((item) =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      toast.success("Added to cart");
       return [...prevItems, { product, quantity: 1 }];
     });
   };

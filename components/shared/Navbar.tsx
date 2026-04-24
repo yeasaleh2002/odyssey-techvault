@@ -14,9 +14,11 @@ import {
   Settings,
   ChevronDown,
   Cpu,
+  Heart,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { NavLink } from "@/types";
 
 const navLinks: NavLink[] = [
@@ -33,6 +35,7 @@ export function Navbar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { totalItems } = useCart();
+  const { totalItems: wishlistTotalItems } = useWishlist();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-lg border-b border-border">
@@ -67,6 +70,19 @@ export function Navbar() {
 
           {/* Right Side */}
           <div className="flex items-center gap-3">
+            {/* Wishlist */}
+            <Link
+              href="/wishlist"
+              className="relative p-2.5 rounded-xl hover:bg-muted transition-colors"
+            >
+              <Heart className="w-5 h-5" />
+              {wishlistTotalItems > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                  {wishlistTotalItems}
+                </span>
+              )}
+            </Link>
+
             {/* Cart */}
             <Link
               href="/cart"

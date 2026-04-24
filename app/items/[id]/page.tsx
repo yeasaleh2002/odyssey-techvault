@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { getProducts } from "@/lib/storage";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { ProductCard, LoadingSpinner } from "@/components/shared";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ export default function ProductDetailPage({
 }) {
   const { id } = use(params);
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -60,6 +62,8 @@ export default function ProductDetailPage({
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+
+  const inWishlist = isInWishlist(product.id);
 
   return (
     <div className="min-h-screen bg-background py-8">
@@ -223,8 +227,16 @@ export default function ProductDetailPage({
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
               </button>
-              <button className="p-4 border border-border rounded-xl hover:bg-muted transition-colors">
-                <Heart className="w-5 h-5" />
+              <button
+                onClick={() => toggleWishlist(product)}
+                className={`p-4 border rounded-xl transition-colors ${
+                  inWishlist
+                    ? "border-destructive bg-destructive/10 text-destructive"
+                    : "border-border hover:bg-muted text-foreground"
+                }`}
+                aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart className={`w-5 h-5 transition-transform active:scale-75 ${inWishlist ? "fill-current" : ""}`} />
               </button>
               <button className="p-4 border border-border rounded-xl hover:bg-muted transition-colors">
                 <Share2 className="w-5 h-5" />
