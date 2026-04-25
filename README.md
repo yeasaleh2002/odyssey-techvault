@@ -42,7 +42,7 @@ Odyssey TechVault is a premium tech e-commerce application featuring a sleek, re
    npm install
    ```
 
-3. **Configure Firebase** (Optional - app works without it)
+3. **Configure Firebase** 
    
    The app includes default Firebase configuration. To use your own Firebase project:
    - Create a Firebase project at [firebase.google.com](https://firebase.google.com)
@@ -126,3 +126,6 @@ Odyssey TechVault is a premium tech e-commerce application featuring a sleek, re
 ## License
 
 MIT License - feel free to use this project for learning or commercial purposes.
+
+# Author 
+Yeasaleh
