@@ -4,7 +4,8 @@
 
 # Environment variables
 .env*.local
-
+.env
+server/.env
 # Common ignores
 node_modules
 .next/
