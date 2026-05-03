@@ -1,9 +1,13 @@
 export interface User {
   uid: string;
+  id?: string;
+  _id?: string;
   email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
+  name: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
   role?: 'user' | 'admin';
+  createdAt?: string;
 }
 
 export interface ProductSpecification {
@@ -14,7 +18,7 @@ export interface ProductSpecification {
 export interface Product {
   id: string;
   _id?: string;
-  name: string;
+  title: string;
   shortDescription: string;
   fullDescription: string;
   price: number;

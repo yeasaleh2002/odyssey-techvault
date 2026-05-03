@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
-  displayName: {
+  name: {
     type: String,
     required: [true, 'Please add a name']
   },
@@ -15,20 +15,24 @@ const UserSchema = new mongoose.Schema({
       'Please add a valid email'
     ]
   },
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
-  },
   password: {
     type: String,
     required: [true, 'Please add a password'],
     minlength: 6,
     select: false
   },
-  photoURL: {
+  firebaseUid: {
     type: String,
-    default: null
+    required: [true, 'Please add a firebase UID'],
+    unique: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+  refreshToken: {
+    type: String
   }
 }, { timestamps: true });
 

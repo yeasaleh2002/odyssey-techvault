@@ -68,10 +68,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       </button>
 
       {/* Image */}
-      <Link href={`/items/${product.id}`} className="block relative aspect-square overflow-hidden bg-muted">
+      <Link href={`/items/${product.id || (product as any)._id}`} className="block relative aspect-square overflow-hidden bg-muted">
         <Image
           src={product.image}
-          alt={product.name}
+          alt={product.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -86,9 +86,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           </span>
         </div>
 
-        <Link href={`/items/${product.id}`}>
+        <Link href={`/items/${product.id || (product as any)._id}`}>
           <h3 className="font-semibold text-foreground line-clamp-1 hover:text-primary transition-colors">
-            {product.name}
+            {product.title}
           </h3>
         </Link>
 
@@ -103,7 +103,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               <Star
                 key={i}
                 className={`w-3.5 h-3.5 ${
-                  i < Math.floor(product.rating)
+                  i < Math.floor(product.rating || 0)
                     ? "text-yellow-400 fill-yellow-400"
                     : "text-muted-foreground/30"
                 }`}
@@ -111,7 +111,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             ))}
           </div>
           <span className="text-xs text-muted-foreground">
-            ({product.reviews.toLocaleString()})
+            ({(product.reviews || 0).toLocaleString()})
           </span>
         </div>
 

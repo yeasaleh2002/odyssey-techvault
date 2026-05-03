@@ -4,5 +4,6 @@ export { Categories } from "./Categories";
 export { WhyChooseUs } from "./WhyChooseUs";
 export { Testimonials } from "./Testimonials";
 export { CTABanner } from "./CTABanner";
-export { DealsSection } from "./DealsSection";
-export { Newsletter } from "./Newsletter";
+export { Stats } from "./Stats";
+export { HowItWorks } from "./HowItWorks";
+export { FAQ } from "./FAQ";

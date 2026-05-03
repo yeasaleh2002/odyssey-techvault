@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
-import { Navbar, Footer } from "@/components/shared";
+import { Navbar, Footer, ThemeProvider } from "@/components/shared";
 import "./globals.css";
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -65,21 +65,23 @@ export default function RootLayout({
     <html lang="en" className="bg-background" suppressHydrationWarning>
       <body className="font-sans antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <Toaster
-                position="bottom-right"
-                toastOptions={{
-                  className:
-                    "!bg-card !text-card-foreground !border !border-border !shadow-lg",
-                  duration: 3000,
-                }}
-              />
-            </WishlistProvider>
-          </CartProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <CartProvider>
+              <WishlistProvider>
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <Toaster
+                  position="bottom-right"
+                  toastOptions={{
+                    className:
+                      "!bg-card !text-card-foreground !border !border-border !shadow-lg",
+                    duration: 3000,
+                  }}
+                />
+              </WishlistProvider>
+            </CartProvider>
+          </ThemeProvider>
         </AuthProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>

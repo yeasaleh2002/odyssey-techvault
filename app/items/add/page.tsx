@@ -8,11 +8,12 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { SectionTitle, LoadingSpinner } from "@/components/shared";
 import { categories } from "@/data/products";
-import { saveProduct } from "@/lib/storage";
+import { createProduct } from "@/lib/services/product";
+import { uploadToImgBB } from "@/lib/uploadImage";
 import toast from "react-hot-toast";
 
 const initialFormData = {
-  name: "",
+  title: "",
   shortDescription: "",
   fullDescription: "",
   price: "",
@@ -27,6 +28,7 @@ export default function AddItemPage() {
 
   const [formData, setFormData] = useState(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Show loading spinner while checking auth
   if (loading) {
@@ -53,6 +55,22 @@ export default function AddItemPage() {
     });
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const url = await uploadToImgBB(file);
+      setFormData({ ...formData, image: url });
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleReset = () => {
     setFormData(initialFormData);
     toast.success("Form reset successfully");
@@ -63,44 +81,29 @@ export default function AddItemPage() {
     setIsSubmitting(true);
 
     // Validate required fields
-    if (!formData.name || !formData.shortDescription || !formData.fullDescription || !formData.price || !formData.category) {
+    if (!formData.title || !formData.shortDescription || !formData.fullDescription || !formData.price || !formData.category) {
       toast.error("Please fill in all required fields");
       setIsSubmitting(false);
       return;
     }
 
-    // Generate unique ID
-    const uniqueId = `product-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-    // Create product object
     const newProduct = {
-      id: uniqueId,
-      name: formData.name,
+      title: formData.title,
       shortDescription: formData.shortDescription,
       fullDescription: formData.fullDescription,
       price: parseFloat(formData.price),
       category: formData.category,
       image: formData.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
       rating: parseFloat(formData.rating) || 4.5,
-      reviews: 0,
-      inStock: true,
-      featured: false,
-      deal: false,
-      specifications: {},
-      createdAt: new Date().toISOString(),
     };
 
-    // Save to localStorage
     try {
-      saveProduct(newProduct as any);
-
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await createProduct(newProduct);
 
       toast.success("Product added successfully!");
       router.push("/items/manage");
-    } catch (error) {
-      toast.error("Failed to add product. Please try again.");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || "Failed to add product. Please try again.");
       setIsSubmitting(false);
     }
   };
@@ -108,7 +111,6 @@ export default function AddItemPage() {
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto px-4 max-w-3xl">
-        {/* Back Button */}
         <Link
           href="/items/manage"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
@@ -135,7 +137,12 @@ export default function AddItemPage() {
               Product Image
             </label>
             <div className="relative">
-              {formData.image ? (
+              {isUploading ? (
+                <div className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-border bg-muted/50">
+                   <LoadingSpinner size="lg" />
+                   <p className="mt-2 text-sm text-muted-foreground">Uploading image...</p>
+                </div>
+              ) : formData.image ? (
                 <div className="relative aspect-video rounded-xl overflow-hidden bg-muted">
                   <img
                     src={formData.image}
@@ -155,32 +162,31 @@ export default function AddItemPage() {
                   </button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-border bg-muted/50 hover:border-primary/50 transition-colors">
+                <label className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-border bg-muted/50 hover:border-primary/50 transition-colors cursor-pointer">
                   <ImageIcon className="w-12 h-12 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground mb-4">Paste an image URL below</p>
+                  <p className="text-sm text-muted-foreground mb-1">Click to upload an image</p>
+                  <p className="text-xs text-muted-foreground">JPEG, PNG, JPG up to 10MB</p>
                   <input
-                    type="url"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    placeholder="https://example.com/image.jpg"
-                    className="w-full max-w-xs px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
                   />
-                </div>
+                </label>
               )}
             </div>
           </div>
 
           {/* Title */}
           <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+            <label htmlFor="title" className="block text-sm font-medium text-foreground mb-2">
               Title *
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="title"
+              name="title"
+              value={formData.title}
               onChange={handleChange}
               required
               className="w-full px-4 py-3 bg-muted border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
@@ -288,7 +294,7 @@ export default function AddItemPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUploading}
               className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSubmitting ? (
@@ -306,7 +312,7 @@ export default function AddItemPage() {
             <button
               type="button"
               onClick={handleReset}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUploading}
               className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <RotateCcw className="w-4 h-4" />

@@ -1,21 +1,27 @@
-import dynamic from "next/dynamic";
-import { Hero } from "@/components/home";
-
-const FeaturedProducts = dynamic(() => import("@/components/home").then((mod) => mod.FeaturedProducts));
-const WhyChooseUs = dynamic(() => import("@/components/home").then((mod) => mod.WhyChooseUs));
-const Categories = dynamic(() => import("@/components/home").then((mod) => mod.Categories));
-const Testimonials = dynamic(() => import("@/components/home").then((mod) => mod.Testimonials));
-const CTABanner = dynamic(() => import("@/components/home").then((mod) => mod.CTABanner));
+import { 
+  Hero, 
+  WhyChooseUs as Features, 
+  Categories, 
+  Stats, 
+  FeaturedProducts, 
+  Testimonials, 
+  FAQ, 
+  HowItWorks, 
+  CTABanner as CTA 
+} from "@/components/home";
 
 export default function HomePage() {
   return (
-    <>
+    <main className="flex flex-col">
       <Hero />
-      <FeaturedProducts />
-      <WhyChooseUs />
+      <Features />
       <Categories />
+      <Stats />
+      <FeaturedProducts />
       <Testimonials />
-      <CTABanner />
-    </>
+      <FAQ />
+      <HowItWorks />
+      <CTA />
+    </main>
   );
 }

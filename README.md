@@ -1,131 +1,94 @@
-# Odyssey TechVault
+# Odyssey TechVault 🚀
 
-A modern, full-stack e-commerce platform for tech gadgets built with Next.js 14, TypeScript, Firebase Authentication, and Tailwind CSS.
+Odyssey TechVault is a premium production-grade e-commerce platform for high-end technology. Built with Next.js, Express, and MongoDB, it features a robust role-based authentication system, advanced product management, and a high-performance interactive UI.
 
-## Project Description
+## 🌟 Key Features
+- **Role-Based Access**: Specialized dashboards for Admins (Inventory, Users) and Customers (Profile, My Items).
+- **Secure Auth**: JWT-based session management with HttpOnly cookies and transparent token refresh.
+- **Product Engine**: Advanced filtering, live search, and real-time inventory management.
+- **Cloud Media**: Integrated with ImgBB for optimized image hosting.
+- **Modern UI**: 8px grid system, dark/light mode, and Framer Motion animations.
+- **Contact System**: Fully functional inquiry form with backend storage.
 
-Odyssey TechVault is a premium tech e-commerce application featuring a sleek, responsive design with smooth animations. Users can browse products, add items to cart, create accounts, and manage their own product listings. The platform showcases 6 premium tech gadgets including smartphones, laptops, headphones, and gaming devices.
+## 🛠 Tech Stack
+- **Frontend**: Next.js 14, Tailwind CSS, Framer Motion, Lucide Icons.
+- **Backend**: Node.js, Express.js, MongoDB (Mongoose).
+- **Authentication**: JWT (Access/Refresh Tokens).
+- **State Management**: React Context API.
 
-## Key Features
+## 🚀 Getting Started
 
-- **Modern UI/UX**: Premium SaaS-style design with Framer Motion animations, responsive layouts, and dark-themed aesthetics
-- **Product Catalog**: Browse, search, filter, and sort products by category, price, and rating
-- **Product Details**: Rich product pages with specifications, image galleries, and related products
-- **Shopping Cart**: Add/remove items, update quantities, with localStorage persistence
-- **Firebase Authentication**: Email/password login, registration, and Google Sign-In
-- **Protected Routes**: Add and manage products (requires authentication)
-- **Product Management**: Create new listings with localStorage persistence, view/delete products
-- **SEO Optimized**: Meta tags, semantic HTML, and proper heading structure
-- **Fully Responsive**: Mobile-first design that works on all devices
+### 1. Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas account (or local MongoDB)
+- ImgBB API Key
 
-## Tech Stack
+### 2. Environment Setup
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Authentication**: Firebase Auth
-- **State Management**: React Context API
-- **Notifications**: React Hot Toast
-- **Icons**: Lucide React
-
-## Setup & Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd odyssey-techvault
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure Firebase** 
-   
-   The app includes default Firebase configuration. To use your own Firebase project:
-   - Create a Firebase project at [firebase.google.com](https://firebase.google.com)
-   - Enable Authentication (Email/Password and Google Sign-In)
-   - Update the configuration in `lib/firebase.ts`
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open in browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## Route Summary
-
-| Route | Description | Access |
-|-------|-------------|--------|
-| `/` | Homepage with hero, featured products, categories, testimonials | Public |
-| `/items` | Product catalog with search, filters, and sorting | Public |
-| `/items/[id]` | Individual product detail page | Public |
-| `/items/add` | Add new product form | Protected |
-| `/items/manage` | View and manage all products | Protected |
-| `/deals` | Special offers and discounted products | Public |
-| `/about` | Company information, mission, team | Public |
-| `/contact` | Contact form and company details | Public |
-| `/cart` | Shopping cart with checkout | Public |
-| `/login` | User login page | Public |
-| `/register` | User registration page | Public |
-
-## Project Structure
-
-```
-├── app/
-│   ├── about/
-│   ├── cart/
-│   ├── contact/
-│   ├── deals/
-│   ├── items/
-│   │   ├── [id]/
-│   │   ├── add/
-│   │   └── manage/
-│   ├── login/
-│   ├── register/
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   ├── home/
-│   │   ├── Hero.tsx
-│   │   ├── FeaturedProducts.tsx
-│   │   ├── Categories.tsx
-│   │   ├── WhyChooseUs.tsx
-│   │   ├── Testimonials.tsx
-│   │   ├── CTABanner.tsx
-│   │   └── Newsletter.tsx
-│   └── shared/
-│       ├── Navbar.tsx
-│       ├── Footer.tsx
-│       ├── ProductCard.tsx
-│       ├── SectionTitle.tsx
-│       └── LoadingSpinner.tsx
-├── context/
-│   ├── AuthContext.tsx
-│   └── CartContext.tsx
-├── data/
-│   └── products.ts
-├── lib/
-│   └── firebase.ts
-└── types/
-    └── index.ts
+Create a `.env.local` file in the **root (frontend)** directory:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_key
 ```
 
-## Available Scripts
+Create a `.env` file in the **server** directory:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_super_secret_key
+JWT_EXPIRE=15m
+JWT_REFRESH_SECRET=your_refresh_secret_key
+JWT_REFRESH_EXPIRE=7d
+NODE_ENV=development
+```
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+### 3. Installation & Development
 
-## License
+**Backend:**
+```bash
+cd server
+npm install
+npm run dev
+```
 
-MIT License - feel free to use this project for learning or commercial purposes.
+**Frontend:**
+```bash
+# In the root directory
+npm install
+npm run dev
+```
 
-# Author 
-Yeasaleh
+### 4. Database Seeding (Optional)
+To populate the database with professional technology items:
+```bash
+cd server
+npm run seed
+```
+
+## 🔐 API Reference
+
+| Endpoint | Method | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `/api/auth/register` | POST | Register new user | Public |
+| `/api/auth/login` | POST | Login & set cookies | Public |
+| `/api/products` | GET | List products (filtered) | Public |
+| `/api/products/:id` | GET | Single product details | Public |
+| `/api/products` | POST | Create product | Private |
+| `/api/contact` | POST | Submit inquiry | Public |
+
+## 🛡 Security Features
+- **Helmet**: Secure HTTP headers.
+- **Sanitization**: Protection against NoSQL injection and XSS.
+- **Rate Limiting**: Brute-force protection on API endpoints.
+- **JWT Best Practices**: Access tokens in memory, Refresh tokens in HttpOnly cookies.
+
+## 🎯 Demo Login
+- **Admin**: `admin@techvault.com` / `admin123`
+- **User**: `user@techvault.com` / `user123`
+
+## 📦 Deployment
+- **Frontend**: Deploy to **Vercel** (connect root folder).
+- **Backend**: Deploy to **Render** or **Railway**. Set `NODE_ENV=production` and ensure CORS allows your Vercel URL.
+
+---
+Built with ❤️ by the Odyssey Team.
