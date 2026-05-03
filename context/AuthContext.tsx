@@ -1,17 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updateProfile,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { User } from "@/types";
+import { toast } from "react-hot-toast";
 
 interface AuthContextType {
   user: User | null;
@@ -19,7 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, displayName: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
-  logout: () => Promise<void>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,49 +19,84 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-    
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-          photoURL: firebaseUser.photoURL,
-        });
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
-    return () => unsubscribe();
-  }, []);
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setUser({
+            uid: data.data._id,
+            email: data.data.email,
+            displayName: data.data.displayName,
+            photoURL: data.data.photoURL,
+            role: data.data.role
+          });
+        } else {
+          localStorage.removeItem('token');
+        }
+      } catch (error) {
+        console.error("Error loading user", error);
+        localStorage.removeItem('token');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
+  }, [API_URL]);
 
   const login = async (email: string, password: string) => {
-    if (!auth) throw new Error("Firebase auth not initialized");
-    await signInWithEmailAndPassword(auth, email, password);
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Login failed');
+    }
+    localStorage.setItem('token', data.token);
+    setUser(data.user);
   };
 
   const register = async (email: string, password: string, displayName: string) => {
-    if (!auth) throw new Error("Firebase auth not initialized");
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(result.user, { displayName });
+    const res = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password, displayName })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Registration failed');
+    }
+    localStorage.setItem('token', data.token);
+    setUser(data.user);
   };
 
   const loginWithGoogle = async () => {
-    if (!auth) throw new Error("Firebase auth not initialized");
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    toast.error("Social login not configured in custom backend yet.");
   };
 
-  const logout = async () => {
-    if (!auth) throw new Error("Firebase auth not initialized");
-    await signOut(auth);
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
   };
 
   return (

@@ -142,3 +142,27 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--foreground);
 }
+
+@layer utilities {
+  .glass {
+    @apply bg-background/60 backdrop-blur-xl border border-white/10 shadow-lg;
+  }
+  
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-lg border border-border/50 shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-500 to-purple-600;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+  }
+}

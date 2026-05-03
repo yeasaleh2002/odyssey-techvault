@@ -100,6 +100,27 @@ export default function LoginPage() {
             Continue with Google
           </button>
 
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <button
+              onClick={() => {
+                setEmail("admin@example.com");
+                setPassword("admin123");
+              }}
+              className="w-full py-2 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-medium hover:bg-primary/20 transition-colors"
+            >
+              Demo Admin
+            </button>
+            <button
+              onClick={() => {
+                setEmail("user@example.com");
+                setPassword("user123");
+              }}
+              className="w-full py-2 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-medium hover:bg-primary/20 transition-colors"
+            >
+              Demo User
+            </button>
+          </div>
+
           {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">

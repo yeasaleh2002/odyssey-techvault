@@ -3,6 +3,7 @@ export interface User {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  role?: 'user' | 'admin';
 }
 
 export interface ProductSpecification {
@@ -12,6 +13,7 @@ export interface ProductSpecification {
 
 export interface Product {
   id: string;
+  _id?: string;
   name: string;
   shortDescription: string;
   fullDescription: string;
