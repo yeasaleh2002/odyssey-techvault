@@ -6,19 +6,19 @@ import { Users, Package, DollarSign, Activity } from "lucide-react";
 import api from "@/lib/api";
 import dynamic from 'next/dynamic';
 
-const BarChart = dynamic(() => import('recharts').then(mod => mod.BarChart), { ssr: false });
-const Bar = dynamic(() => import('recharts').then(mod => mod.Bar), { ssr: false });
-const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false });
-const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false });
-const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false });
-const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
-const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false });
-const Line = dynamic(() => import('recharts').then(mod => mod.Line), { ssr: false });
-const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), { ssr: false });
-const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), { ssr: false });
-const Cell = dynamic(() => import('recharts').then(mod => mod.Cell), { ssr: false });
-const Legend = dynamic(() => import('recharts').then(mod => mod.Legend), { ssr: false });
+const BarChart: any = dynamic(() => import('recharts').then(mod => ({ default: mod.BarChart as any })), { ssr: false });
+const Bar: any = dynamic(() => import('recharts').then(mod => ({ default: mod.Bar as any })), { ssr: false });
+const XAxis: any = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis as any })), { ssr: false });
+const YAxis: any = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis as any })), { ssr: false });
+const CartesianGrid: any = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid as any })), { ssr: false });
+const Tooltip: any = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip as any })), { ssr: false });
+const ResponsiveContainer: any = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer as any })), { ssr: false });
+const LineChart: any = dynamic(() => import('recharts').then(mod => ({ default: mod.LineChart as any })), { ssr: false });
+const Line: any = dynamic(() => import('recharts').then(mod => ({ default: mod.Line as any })), { ssr: false });
+const PieChart: any = dynamic(() => import('recharts').then(mod => ({ default: mod.PieChart as any })), { ssr: false });
+const Pie: any = dynamic(() => import('recharts').then(mod => ({ default: mod.Pie as any })), { ssr: false });
+const Cell: any = dynamic(() => import('recharts').then(mod => ({ default: mod.Cell as any })), { ssr: false });
+const Legend: any = dynamic(() => import('recharts').then(mod => ({ default: mod.Legend as any })), { ssr: false });
 import { LoadingSpinner } from "@/components/shared";
 
 export default function AdminDashboard() {

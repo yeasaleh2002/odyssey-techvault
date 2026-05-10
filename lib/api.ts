@@ -9,10 +9,17 @@ const api = axios.create({
 });
 
 // A variable to store access token in memory
-let accessToken = '';
+let accessToken = typeof window !== 'undefined' ? localStorage.getItem('odyssey-token') || '' : '';
 
 export const setAccessToken = (token: string) => {
   accessToken = token;
+  if (typeof window !== 'undefined') {
+    if (token) {
+      localStorage.setItem('odyssey-token', token);
+    } else {
+      localStorage.removeItem('odyssey-token');
+    }
+  }
 };
 
 export const getAccessToken = () => accessToken;

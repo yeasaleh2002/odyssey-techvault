@@ -48,7 +48,7 @@ export default function UserProfilePage() {
                 <label className="text-sm font-medium text-foreground">Full Name</label>
                 <input 
                   type="text" 
-                  defaultValue={user.name}
+                  defaultValue={user.name || ""}
                   className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 />
               </div>
@@ -56,7 +56,7 @@ export default function UserProfilePage() {
                 <label className="text-sm font-medium text-foreground">Email Address</label>
                 <input 
                   type="email" 
-                  defaultValue={user.email}
+                  defaultValue={user.email || ""}
                   readOnly
                   className="w-full px-4 py-3 bg-muted border border-border rounded-xl text-muted-foreground cursor-not-allowed"
                 />

@@ -22,24 +22,41 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessTokenState] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Initialize from localStorage on first render
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('odyssey-user');
+      const storedToken = localStorage.getItem('odyssey-token');
+      if (storedUser) setUser(JSON.parse(storedUser));
+      if (storedToken) setAccessTokenState(storedToken);
+    }
+  }, []);
 
   const fetchCurrentUser = async () => {
     try {
       const data = await getMe();
       if (data.success) {
         setUser(data.data);
+        localStorage.setItem('odyssey-user', JSON.stringify(data.data));
         const token = getAccessToken();
-        if (token) setAccessToken(token);
+        if (token) {
+          setAccessTokenState(token);
+          localStorage.setItem('odyssey-token', token);
+        }
       } else {
         setUser(null);
+        localStorage.removeItem('odyssey-user');
       }
+    } catch (error: any) {
       // Only log non-401 errors, as 401 just means the user's session expired
       if (error?.response?.status !== 401) {
         console.error("Error loading user profile", error);
       }
       setUser(null);
+      localStorage.removeItem('odyssey-user');
     } finally {
       setLoading(false);
     }
@@ -54,9 +71,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Send to backend
     const data = await loginUser({ email, password });
     if (data.success) {
-      setAccessToken(data.accessToken);
+      setAccessTokenState(data.accessToken);
       setMemoryToken(data.accessToken);
       setUser(data.user);
+      localStorage.setItem('odyssey-user', JSON.stringify(data.user));
+      localStorage.setItem('odyssey-token', data.accessToken);
     } else {
       throw new Error(data.error || 'Login failed');
     }
@@ -66,9 +85,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Send to backend
     const data = await registerUser({ email, password, name, role, adminSecret });
     if (data.success) {
-      setAccessToken(data.accessToken);
+      setAccessTokenState(data.accessToken);
       setMemoryToken(data.accessToken);
       setUser(data.user);
+      localStorage.setItem('odyssey-user', JSON.stringify(data.user));
+      localStorage.setItem('odyssey-token', data.accessToken);
     } else {
       throw new Error(data.error || 'Registration failed');
     }
@@ -80,9 +101,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Logout failed", error);
     }
-    setAccessToken(null);
+    setAccessTokenState(null);
     setMemoryToken('');
     setUser(null);
+    localStorage.removeItem('odyssey-user');
+    localStorage.removeItem('odyssey-token');
   };
 
   return (

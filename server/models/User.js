@@ -29,7 +29,28 @@ const UserSchema = new mongoose.Schema({
   },
   refreshToken: {
     type: String
-  }
+  },
+  cart: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1,
+        default: 1
+      }
+    }
+  ],
+  wishlist: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    }
+  ]
 }, { timestamps: true });
 
 // Encrypt password using bcrypt

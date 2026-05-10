@@ -16,7 +16,6 @@ import {
   Zap,
   ArrowLeft,
 } from "lucide-react";
-import { useCart } from "@/context/AuthContext"; // Wait, I should check if useCart is in AuthContext or CartContext
 import { useCart as useRealCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { ProductCard, LoadingSpinner } from "@/components/shared";
