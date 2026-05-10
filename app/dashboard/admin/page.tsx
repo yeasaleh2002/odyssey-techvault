@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState({
     overview: { totalUsers: 0, totalAdmins: 0, totalProducts: 0, totalContacts: 0 },
-    charts: { productsByCategory: [], roleDistribution: [], userGrowth: [] }
+    charts: { productsByCategory: [] as any[], roleDistribution: [] as any[], userGrowth: [] as any[] }
   });
   const [loading, setLoading] = useState(true);
 
@@ -108,15 +108,21 @@ export default function AdminDashboard() {
         <div className="p-6 bg-card border border-border rounded-2xl shadow-sm">
           <h2 className="text-xl font-semibold mb-6">Products by Category</h2>
           <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.charts.productsByCategory}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
-                <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {stats.charts.productsByCategory && stats.charts.productsByCategory.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stats.charts.productsByCategory}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
+                  <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-xl">
+                No products found
+              </div>
+            )}
           </div>
         </div>
 
@@ -138,25 +144,31 @@ export default function AdminDashboard() {
         <div className="p-6 bg-card border border-border rounded-2xl shadow-sm lg:col-span-2">
           <h2 className="text-xl font-semibold mb-6">Role Distribution</h2>
           <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={stats.charts.roleDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {stats.charts.roleDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
-                <Legend verticalAlign="bottom" height={36}/>
-              </PieChart>
-            </ResponsiveContainer>
+            {stats.charts.roleDistribution && stats.charts.roleDistribution.length > 0 && stats.charts.roleDistribution.some(d => d.value > 0) ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={stats.charts.roleDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {stats.charts.roleDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
+                  <Legend verticalAlign="bottom" height={36}/>
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-xl">
+                No users found
+              </div>
+            )}
           </div>
         </div>
       </div>

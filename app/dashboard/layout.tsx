@@ -49,8 +49,6 @@ export default function DashboardLayout({
     { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/admin/users", label: "Manage Users", icon: Users },
     { href: "/dashboard/admin/admins", label: "Manage Admins", icon: Shield },
-    { href: "/items/add", label: "Add Product", icon: Plus },
-    { href: "/items/manage", label: "Manage Products", icon: Package },
     { href: "/dashboard/admin/settings", label: "Settings", icon: Settings },
   ];
 

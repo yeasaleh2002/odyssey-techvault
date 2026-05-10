@@ -8,6 +8,9 @@ exports.getCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).populate('cart.product');
     
+    // Ensure cart exists (for legacy users)
+    if (!user.cart) user.cart = [];
+
     // Filter out null products (in case a product was deleted)
     const validCartItems = user.cart.filter(item => item.product != null);
     
@@ -34,6 +37,8 @@ exports.addToCart = async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
     
+    if (!user.cart) user.cart = [];
+
     // Check if item exists in cart
     const itemIndex = user.cart.findIndex(p => p.product.toString() === productId);
 
@@ -65,6 +70,8 @@ exports.removeFromCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
     
+    if (!user.cart) user.cart = [];
+
     user.cart = user.cart.filter(item => item.product.toString() !== req.params.productId);
     
     await user.save();

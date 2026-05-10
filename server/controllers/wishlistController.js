@@ -7,6 +7,8 @@ exports.getWishlist = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).populate('wishlist');
     
+    if (!user.wishlist) user.wishlist = [];
+
     res.status(200).json({
       success: true,
       data: user.wishlist.filter(p => p != null)
@@ -24,6 +26,8 @@ exports.toggleWishlist = async (req, res, next) => {
     const { productId } = req.body;
     const user = await User.findById(req.user.id);
     
+    if (!user.wishlist) user.wishlist = [];
+
     const index = user.wishlist.indexOf(productId);
     
     if (index > -1) {
