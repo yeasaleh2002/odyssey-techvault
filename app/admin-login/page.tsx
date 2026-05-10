@@ -3,50 +3,31 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff, Cpu, ArrowRight, ShieldCheck, Key } from "lucide-react";
+import { motion } from "framer-motion";
+import { Mail, Lock, Eye, EyeOff, Cpu, ArrowRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 
-export default function RegisterPage() {
-  const [name, setName] = useState("");
+export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { register } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      await register(
-        email, 
-        password, 
-        name, 
-        'user'
-      );
-      toast.success("Account created successfully!");
-      
+      await login(email, password);
+      toast.success("Welcome back!");
       const urlParams = new URLSearchParams(window.location.search);
       const redirect = urlParams.get('redirect');
       router.push(redirect || "/");
-    } catch (error: any) {
-      const message = error.response?.data?.error || error.message || "Failed to create account";
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to login";
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -70,42 +51,37 @@ export default function RegisterPage() {
               <Cpu className="w-6 h-6 text-primary-foreground" />
             </div>
             <span className="text-2xl font-bold text-foreground">
-              Odyssey <span className="text-primary">TechVault</span>
+              Odyssey <span className="text-primary">Admin Portal</span>
             </span>
           </Link>
         </div>
 
         {/* Form Card */}
         <div className="p-8 bg-card border border-border rounded-2xl shadow-sm">
-          <h1 className="text-2xl font-bold text-foreground text-center mb-2">Create Account</h1>
-          <p className="text-muted-foreground text-center mb-6">
-            Join Odyssey TechVault today
+          <h1 className="text-2xl font-bold text-foreground text-center mb-2">Admin Login</h1>
+          <p className="text-muted-foreground text-center mb-8">
+            Sign in to the Odyssey Admin Portal
           </p>
 
 
+
+          <div className="flex justify-center mb-6">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("admin@example.com");
+                setPassword("admin123");
+              }}
+              className="px-6 py-2 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-medium hover:bg-primary/20 transition-colors"
+            >
+              Demo Admin Auto-Fill
+            </button>
+          </div>
 
 
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-muted border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                  placeholder="John Doe"
-                />
-              </div>
-            </div>
-
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                 Email
@@ -136,7 +112,6 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={6}
                   className="w-full pl-12 pr-12 py-3 bg-muted border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   placeholder="••••••••"
                 />
@@ -150,51 +125,43 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2">
                 <input
-                  type={showPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="w-full pl-12 pr-4 py-3 bg-muted border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                  placeholder="••••••••"
+                  type="checkbox"
+                  className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
                 />
-              </div>
+                <span className="text-sm text-muted-foreground">Remember me</span>
+              </label>
+              <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                Forgot password?
+              </Link>
             </div>
-
-
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-lg shadow-primary/20"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {isLoading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                  Processing...
+                  Signing in...
                 </>
               ) : (
                 <>
-                  Create Account
+                  Sign In
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Login Link */}
+          {/* Register Link */}
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary font-medium hover:underline">
-              Sign in
+            Don&apos;t have an account?{" "}
+            <Link href="/admin-register" className="text-primary font-medium hover:underline">
+              Create admin account
             </Link>
           </p>
         </div>

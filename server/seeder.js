@@ -51,24 +51,18 @@ const importData = async () => {
     await User.deleteMany();
     await Product.deleteMany();
 
-    const adminSalt = await bcrypt.genSalt(10);
-    const adminPassword = await bcrypt.hash('admin123', adminSalt);
-    
-    const userSalt = await bcrypt.genSalt(10);
-    const userPassword = await bcrypt.hash('user123', userSalt);
-
     const createdUsers = await User.create([
       {
         name: 'Admin User',
         email: 'admin@example.com',
-        password: adminPassword,
+        password: 'admin123',
         firebaseUid: 'dummy_admin_firebase_uid_123',
         role: 'admin'
       },
       {
         name: 'Demo User',
         email: 'user@example.com',
-        password: userPassword,
+        password: 'user123',
         firebaseUid: 'dummy_user_firebase_uid_456',
         role: 'user'
       }
