@@ -71,11 +71,16 @@ export default function CheckoutPage() {
     setSubmitting(true);
     try {
       // Build order items from cart
-      const orderItems = items.map((item) => ({
-        product: (item.product as any)._id || (item.product as any).id,
-        quantity: item.quantity,
-        price: (item.product as any).price,
-      }));
+      const orderItems = items.map((item) => {
+        const product = item.product as any;
+        const productId = product._id || product.id || (typeof product === "string" ? product : null);
+        
+        return {
+          product: productId,
+          quantity: Number(item.quantity),
+          price: Number(product.price),
+        };
+      });
 
       const orderData = {
         items: orderItems,
@@ -88,9 +93,9 @@ export default function CheckoutPage() {
 
       if (res.success) {
         setOrderId(res.data._id);
+        setStep("success");
         // Backend already cleared cart in DB — just reset local state
         await clearCart(true);
-        setStep("success");
         toast.success("Order placed successfully! 🎉");
       } else {
         toast.error("Failed to place order");

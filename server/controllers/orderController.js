@@ -12,20 +12,30 @@ exports.createOrder = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'No order items' });
     }
 
-    // Save order to Orders collection tied to user
-    const order = await Order.create({
-      user: req.user.id,
-      items,
+    // 1. Save order to Orders collection
+    const orderItems = items.map(item => ({
+      product: item.product,
+      quantity: item.quantity,
+      price: item.price
+    }));
+
+    const order = new Order({
+      user: req.user._id,
+      items: orderItems,
       totalAmount,
       shippingAddress,
-      paymentMethod: paymentMethod || 'Credit Card'
+      paymentMethod: paymentMethod || 'Cash on Delivery',
+      paymentStatus: 'Pending',
+      orderStatus: 'Processing'
     });
 
-    // ✅ Clear the user's cart in DB ONLY after order is successfully saved
-    await User.findByIdAndUpdate(req.user.id, { cart: [] });
+    const savedOrder = await order.save();
+
+    // 2. Clear the user's cart in DB ONLY after order is successfully saved
+    await User.findByIdAndUpdate(req.user._id, { $set: { cart: [] } });
 
     // Return populated order
-    const populated = await Order.findById(order._id)
+    const populated = await Order.findById(savedOrder._id)
       .populate('items.product', 'title image price category');
 
     res.status(201).json({
