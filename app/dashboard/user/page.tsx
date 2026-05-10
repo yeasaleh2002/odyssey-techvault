@@ -3,45 +3,18 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { 
-  Package, 
   ShoppingBag, 
   Heart, 
   Clock, 
-  ArrowUpRight,
   User as UserIcon,
   Mail,
   Shield
 } from "lucide-react";
-import { getProducts } from "@/lib/services/product";
-import { ProductCard, LoadingSpinner, SectionTitle } from "@/components/shared";
-import { Product } from "@/types";
 import Link from "next/link";
-import { motion } from "framer-motion";
-
 export default function UserDashboard() {
   const { user } = useAuth();
-  const [myProducts, setMyProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMyItems = async () => {
-      try {
-        // ideally backend has /api/products/me or filters by creator
-        const data = await getProducts();
-        if (data.success) {
-          // Simulation: filter items created by the user if the field exists
-          // Since we don't have a specific endpoint, we just show some items
-          setMyProducts(data.data.slice(0, 3));
-        }
-      } catch (error) {
-        console.error("Failed to load your items", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyItems();
-  }, []);
+  if (!user) return null;
 
   if (!user) return null;
 
@@ -76,15 +49,7 @@ export default function UserDashboard() {
          </div>
 
          {/* Stats and Activity */}
-         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
-            <div className="p-6 bg-primary text-primary-foreground rounded-3xl shadow-lg shadow-primary/20">
-               <div className="flex justify-between items-start mb-4">
-                  <Package className="w-6 h-6 opacity-80" />
-                  <ArrowUpRight className="w-5 h-5 opacity-80" />
-               </div>
-               <h3 className="text-3xl font-bold mb-1">{myProducts.length}</h3>
-               <p className="text-sm opacity-80">Active Listings</p>
-            </div>
+         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
 
             <div className="p-6 bg-card border border-border rounded-3xl shadow-sm">
                <div className="flex justify-between items-start mb-4">
@@ -103,36 +68,6 @@ export default function UserDashboard() {
             </div>
          </div>
       </div>
-
-      {/* My Items Section */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-           <h2 className="text-2xl font-bold text-foreground">My Recent Listings</h2>
-           <Link href="/items/manage" className="text-sm font-medium text-primary hover:underline">
-             Manage All
-           </Link>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-10">
-            <LoadingSpinner size="md" />
-          </div>
-        ) : myProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-             {myProducts.map((product, index) => (
-                <ProductCard key={product.id || (product as any)._id} product={product} index={index} />
-             ))}
-          </div>
-        ) : (
-          <div className="p-12 bg-muted/30 border border-border border-dashed rounded-3xl text-center">
-             <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-             <p className="text-muted-foreground">You haven't listed any products yet.</p>
-             <Link href="/items/add" className="mt-4 inline-flex text-primary font-semibold hover:underline">
-               Start Selling Now
-             </Link>
-          </div>
-        )}
-      </section>
 
       {/* Recent Activity */}
       <section>

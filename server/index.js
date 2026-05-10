@@ -19,6 +19,12 @@ const hpp = require('hpp');
 
 const app = express();
 
+// Enable CORS
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true
+}));
+
 // Set security headers
 app.use(helmet());
 
@@ -37,18 +43,12 @@ app.use(xss());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 mins
-  max: 100
+  max: 500 // Increased from 100 to prevent issues during dev
 });
 app.use('/api', limiter);
 
 // Prevent http param pollution
 app.use(hpp());
-
-// Enable CORS
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
-}));
 
 // Mount routers
 app.use('/api/auth', require('./routes/authRoutes'));

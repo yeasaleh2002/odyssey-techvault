@@ -79,6 +79,11 @@ export default function EditItemPage({
     return null;
   }
 
+  if (user.role !== "admin") {
+    router.push("/dashboard/user");
+    return null;
+  }
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {

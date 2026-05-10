@@ -50,9 +50,14 @@ export default function ManageItemsPage() {
     );
   }
 
-  // Redirect if not logged in
+  // Redirect if not logged in or not admin
   if (!user) {
     router.push("/login");
+    return null;
+  }
+
+  if (user.role !== "admin") {
+    router.push("/dashboard/user");
     return null;
   }
 
