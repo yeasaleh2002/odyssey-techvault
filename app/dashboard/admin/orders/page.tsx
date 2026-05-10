@@ -243,11 +243,18 @@ export default function AdminOrdersPage() {
                   <MapPin className="w-4 h-4 text-primary" /> Shipping Address
                 </div>
                 <p className="font-medium text-foreground">{selectedOrder.shippingAddress?.fullName}</p>
+                {selectedOrder.shippingAddress?.phone && (
+                  <p className="text-sm text-muted-foreground">📞 {selectedOrder.shippingAddress.phone}</p>
+                )}
                 <p className="text-sm text-muted-foreground">{selectedOrder.shippingAddress?.address}</p>
-                <p className="text-sm text-muted-foreground">
-                  {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.postalCode}
-                </p>
-                <p className="text-sm text-muted-foreground">{selectedOrder.shippingAddress?.country}</p>
+                {selectedOrder.shippingAddress?.city && selectedOrder.shippingAddress.city !== 'N/A' && (
+                  <p className="text-sm text-muted-foreground">
+                    {selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.postalCode}
+                  </p>
+                )}
+                {selectedOrder.shippingAddress?.country && selectedOrder.shippingAddress.country !== 'N/A' && (
+                  <p className="text-sm text-muted-foreground">{selectedOrder.shippingAddress.country}</p>
+                )}
               </div>
 
               {/* Payment */}
