@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { SectionTitle, LoadingSpinner } from "@/components/shared";
 import { categories } from "@/data/products";
 import { saveProduct } from "@/lib/storage";
-import { getProductById } from "@/lib/services/product";
+import { getProductById, updateProduct } from "@/lib/services/product";
 import { uploadToImgBB } from "@/lib/uploadImage";
 import toast from "react-hot-toast";
 
@@ -119,15 +119,29 @@ export default function EditItemPage({
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!formData.title || !formData.shortDescription || !formData.fullDescription || !formData.price || !formData.category) {
+    if (!formData.title || !formData.shortDescription || !formData.fullDescription || !formData.price || !formData.category || !formData.image) {
       toast.error("Please fill in all required fields");
       setIsSubmitting(false);
       return;
     }
 
-    // Simulate backend update since PUT route is not strictly required by specs
-    toast.error("Backend update route not implemented in this phase");
-    setIsSubmitting(false);
+    const updatedProduct = {
+      ...formData,
+      price: parseFloat(formData.price),
+      rating: parseFloat(formData.rating) || 4.5,
+    };
+
+    try {
+      const res = await updateProduct(id, updatedProduct);
+      if (res.success) {
+        toast.success("Product updated successfully!");
+        router.push("/dashboard/admin/products"); // Redirect to manage page
+      }
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || "Failed to update product. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

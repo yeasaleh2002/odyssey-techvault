@@ -11,8 +11,11 @@ import {
   Search,
   Star,
   AlertCircle,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
 import { getProducts, createProduct, updateProduct, deleteProduct } from "@/lib/services/product";
+import { uploadToImgBB } from "@/lib/uploadImage";
 import toast from "react-hot-toast";
 
 const CATEGORIES = [
@@ -51,6 +54,7 @@ export default function AdminProductsPage() {
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [formLoading, setFormLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const fetchProducts = useCallback(async () => {
@@ -91,6 +95,27 @@ export default function AdminProductsPage() {
       inStock: product.inStock !== undefined ? product.inStock : true,
     });
     setShowModal(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file (JPEG, PNG, etc.)");
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const url = await uploadToImgBB(file);
+      setForm({ ...form, image: url });
+      toast.success("Image uploaded to ImgBB!");
+    } catch (error: any) {
+      toast.error(error.message || "Error uploading image");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -318,15 +343,63 @@ export default function AdminProductsPage() {
 
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-1.5">
-                    Image URL <span className="text-red-500">*</span>
+                    Product Image <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="url"
-                    value={form.image}
-                    onChange={(e) => setForm({ ...form, image: e.target.value })}
-                    placeholder="https://example.com/image.jpg"
-                    className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  />
+                  
+                  <div className="space-y-4">
+                    {/* File Upload Zone */}
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="image-upload"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                      />
+                      <label
+                        htmlFor="image-upload"
+                        className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
+                          uploadingImage 
+                            ? "bg-muted border-border cursor-wait" 
+                            : form.image 
+                              ? "bg-muted/30 border-primary/30 hover:border-primary/50" 
+                              : "bg-background border-border hover:border-primary/50 hover:bg-primary/5"
+                        }`}
+                      >
+                        {uploadingImage ? (
+                          <>
+                            <Loader2 className="w-10 h-10 animate-spin text-primary mb-3" />
+                            <span className="text-sm font-semibold text-foreground">Uploading to ImgBB...</span>
+                            <span className="text-xs text-muted-foreground mt-1">Please wait a moment</span>
+                          </>
+                        ) : form.image ? (
+                          <>
+                            <div className="absolute inset-0 p-2">
+                              <img src={form.image} className="w-full h-full object-cover rounded-xl opacity-20" alt="" />
+                            </div>
+                            <Upload className="w-8 h-8 text-primary mb-2 relative z-10" />
+                            <span className="text-sm font-bold text-foreground relative z-10">Image Uploaded!</span>
+                            <span className="text-xs text-muted-foreground mt-1 relative z-10">Click to change the image</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-10 h-10 text-muted-foreground mb-3" />
+                            <span className="text-base font-bold text-foreground">Click to upload product image</span>
+                            <span className="text-xs text-muted-foreground mt-1 text-center px-4">
+                              High resolution PNG or JPG (recommended 800x800 or 16:9)
+                            </span>
+                          </>
+                        )}
+                      </label>
+                    </div>
+
+                    {form.image && (
+                      <p className="text-[11px] text-center text-green-600 font-medium bg-green-500/10 py-2 rounded-lg border border-green-500/20">
+                        ✓ Image successfully hosted on ImgBB
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div>

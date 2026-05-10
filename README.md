@@ -2,7 +2,27 @@
 
 Odyssey TechVault is a premium production-grade e-commerce platform for high-end technology. Built with Next.js, Express, and MongoDB, it features a robust role-based authentication system, advanced product management, and a high-performance interactive UI.
 
+## 🔗 Project Links
+
+- **Live Website URL**: [https://odyssey-techvault.vercel.app](https://odyssey-techvault.vercel.app)
+- **GitHub Repository**: [https://github.com/yeasaleh2002/odyssey-techvault](https://github.com/yeasaleh2002/odyssey-techvault)
+- **Frontend Source**: `https://github.com/yeasaleh2002/odyssey-techvault/tree/main`
+- **Backend Source**: `https://github.com/yeasaleh2002/odyssey-techvault/tree/main/server`
+
+## 🔐 Demo Credentials
+
+### Admin:
+
+- **Email**: `admin@example.com`
+- **Password**: `admin123`
+
+### User:
+
+- **Email**: `user@example.com`
+- **Password**: `user123`
+
 ## 🌟 Key Features
+
 - **Role-Based Access**: Specialized dashboards for Admins (Inventory, Users) and Customers (Profile, My Items).
 - **Secure Auth**: JWT-based session management with HttpOnly cookies and transparent token refresh.
 - **Product Engine**: Advanced filtering, live search, and real-time inventory management.
@@ -11,6 +31,7 @@ Odyssey TechVault is a premium production-grade e-commerce platform for high-end
 - **Contact System**: Fully functional inquiry form with backend storage.
 
 ## 🛠 Tech Stack
+
 - **Frontend**: Next.js 14, Tailwind CSS, Framer Motion, Lucide Icons.
 - **Backend**: Node.js, Express.js, MongoDB (Mongoose).
 - **Authentication**: JWT (Access/Refresh Tokens).
@@ -19,6 +40,7 @@ Odyssey TechVault is a premium production-grade e-commerce platform for high-end
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
+
 - Node.js (v18+)
 - MongoDB Atlas account (or local MongoDB)
 - ImgBB API Key
@@ -26,12 +48,14 @@ Odyssey TechVault is a premium production-grade e-commerce platform for high-end
 ### 2. Environment Setup
 
 Create a `.env.local` file in the **root (frontend)** directory:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_key
 ```
 
 Create a `.env` file in the **server** directory:
+
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
@@ -45,6 +69,7 @@ NODE_ENV=development
 ### 3. Installation & Development
 
 **Backend:**
+
 ```bash
 cd server
 npm install
@@ -52,6 +77,7 @@ npm run dev
 ```
 
 **Frontend:**
+
 ```bash
 # In the root directory
 npm install
@@ -59,36 +85,21 @@ npm run dev
 ```
 
 ### 4. Database Seeding (Optional)
+
 To populate the database with professional technology items:
+
 ```bash
 cd server
 npm run seed
 ```
 
-## 🔐 API Reference
-
-| Endpoint | Method | Description | Access |
-| :--- | :--- | :--- | :--- |
-| `/api/auth/register` | POST | Register new user | Public |
-| `/api/auth/login` | POST | Login & set cookies | Public |
-| `/api/products` | GET | List products (filtered) | Public |
-| `/api/products/:id` | GET | Single product details | Public |
-| `/api/products` | POST | Create product | Private |
-| `/api/contact` | POST | Submit inquiry | Public |
-
 ## 🛡 Security Features
+
 - **Helmet**: Secure HTTP headers.
 - **Sanitization**: Protection against NoSQL injection and XSS.
 - **Rate Limiting**: Brute-force protection on API endpoints.
 - **JWT Best Practices**: Access tokens in memory, Refresh tokens in HttpOnly cookies.
 
-## 🎯 Demo Login
-- **Admin**: `admin@example.com` / `admin123`
-- **User**: `user@example.com` / `user123`
-
-## 📦 Deployment
-- **Frontend**: Deploy to **Vercel** (connect root folder).
-- **Backend**: Deploy to **Render** or **Railway**. Set `NODE_ENV=production` and ensure CORS allows your Vercel URL.
-
 ---
+
 Built with ❤️ by the Odyssey Team.
