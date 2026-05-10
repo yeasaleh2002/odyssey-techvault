@@ -17,26 +17,32 @@ const generateTokens = (id) => {
 // @access  Public
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, firebaseUid } = req.body;
+    const { name, email, password, role, adminSecret } = req.body;
 
     // Check if user exists
-    let user = await User.findOne({ email });
-    if (user) {
+    let userExists = await User.findOne({ email });
+    if (userExists) {
       return res.status(400).json({ success: false, error: 'Email already exists' });
     }
     
-    let uidExists = await User.findOne({ firebaseUid });
-    if (uidExists) {
-        return res.status(400).json({ success: false, error: 'Firebase UID already exists' });
+
+
+    // Determine role
+    let userRole = 'user';
+    if (role === 'admin') {
+      if (adminSecret === (process.env.ADMIN_REGISTRATION_SECRET || 'odyssey_admin_2024')) {
+        userRole = 'admin';
+      } else {
+        return res.status(403).json({ success: false, error: 'Invalid admin secret' });
+      }
     }
 
     // Create user
-    user = await User.create({
+    const user = await User.create({
       name,
       email,
       password,
-      firebaseUid,
-      role: 'user'
+      role: userRole
     });
 
     // Generate tokens
@@ -73,13 +79,13 @@ exports.register = async (req, res, next) => {
 // @access  Public
 exports.login = async (req, res, next) => {
   try {
-    const { email, password, firebaseUid } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !firebaseUid) {
-      return res.status(400).json({ success: false, error: 'Please provide email, password and firebaseUid' });
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Please provide email and password' });
     }
 
-    const user = await User.findOne({ email, firebaseUid }).select('+password');
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }

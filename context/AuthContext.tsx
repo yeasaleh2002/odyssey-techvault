@@ -5,21 +5,15 @@ import { User } from "@/types";
 import { toast } from "react-hot-toast";
 import { loginUser, registerUser, logoutUser, getMe } from "@/lib/services/auth";
 import { setAccessToken as setMemoryToken, getAccessToken } from "@/lib/api";
-import { auth, googleProvider } from "@/lib/firebase";
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signInWithPopup, 
-  signOut 
-} from "firebase/auth";
+
 
 interface AuthContextType {
   user: User | null;
   accessToken: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  register: (email: string, password: string, name: string, role?: string, adminSecret?: string) => Promise<void>;
+
   logout: () => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
 }
@@ -55,12 +49,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // 1. Login with Firebase
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const firebaseUid = userCredential.user.uid;
-
-    // 2. Send to backend
-    const data = await loginUser({ email, password, firebaseUid });
+    // Send to backend
+    const data = await loginUser({ email, password });
     if (data.success) {
       setAccessToken(data.accessToken);
       setMemoryToken(data.accessToken);
@@ -70,13 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string, name: string) => {
-    // 1. Create user via Firebase
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const firebaseUid = userCredential.user.uid;
-
-    // 2. Send to backend
-    const data = await registerUser({ email, password, name, firebaseUid });
+  const register = async (email: string, password: string, name: string, role?: string, adminSecret?: string) => {
+    // Send to backend
+    const data = await registerUser({ email, password, name, role, adminSecret });
     if (data.success) {
       setAccessToken(data.accessToken);
       setMemoryToken(data.accessToken);
@@ -85,50 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(data.error || 'Registration failed');
     }
   };
-
-  const loginWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const firebaseUser = result.user;
-      
-      const email = firebaseUser.email || '';
-      const firebaseUid = firebaseUser.uid;
-      const name = firebaseUser.displayName || 'Google User';
-      
-      // Try to login first
-      try {
-        const loginData = await loginUser({ email, firebaseUid });
-        if (loginData.success) {
-          setAccessToken(loginData.accessToken);
-          setMemoryToken(loginData.accessToken);
-          setUser(loginData.user);
-          return;
-        }
-      } catch (loginError: any) {
-        // If 401/400, it might mean user doesn't exist in backend yet, fallback to register
-        if (loginError.response?.status === 401 || loginError.response?.status === 400) {
-          // Generate a secure random password since backend requires it
-          const randomPassword = Math.random().toString(36).slice(-10) + "A1!";
-          const regData = await registerUser({ name, email, password: randomPassword, firebaseUid });
-          if (regData.success) {
-            setAccessToken(regData.accessToken);
-            setMemoryToken(regData.accessToken);
-            setUser(regData.user);
-            return;
-          }
-        }
-        throw loginError;
-      }
-    } catch (error) {
-      console.error("Google login failed", error);
-      throw error;
-    }
-  };
-
   const logout = async () => {
     try {
-      // Firebase Signout
-      await signOut(auth);
       // Backend Signout
       await logoutUser();
     } catch (error) {
@@ -140,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, loading, login, register, loginWithGoogle, logout, fetchCurrentUser }}>
+    <AuthContext.Provider value={{ user, accessToken, loading, login, register, logout, fetchCurrentUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -83,8 +83,8 @@ npm run seed
 - **JWT Best Practices**: Access tokens in memory, Refresh tokens in HttpOnly cookies.
 
 ## 🎯 Demo Login
-- **Admin**: `admin@techvault.com` / `admin123`
-- **User**: `user@techvault.com` / `user123`
+- **Admin**: `admin@example.com` / `admin123`
+- **User**: `user@example.com` / `user123`
 
 ## 📦 Deployment
 - **Frontend**: Deploy to **Vercel** (connect root folder).

@@ -21,11 +21,7 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false
   },
-  firebaseUid: {
-    type: String,
-    required: [true, 'Please add a firebase UID'],
-    unique: true
-  },
+
   role: {
     type: String,
     enum: ['user', 'admin'],

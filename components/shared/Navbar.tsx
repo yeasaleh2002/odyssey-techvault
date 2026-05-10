@@ -40,7 +40,7 @@ export function Navbar() {
   const { totalItems: wishlistTotalItems } = useWishlist();
 
   const navLinks = user 
-    ? [...baseNavLinks, { href: "/dashboard/admin", label: "Dashboard" }] 
+    ? [...baseNavLinks, { href: user.role === 'admin' ? "/dashboard/admin" : "/dashboard/user", label: "Dashboard" }] 
     : baseNavLinks;
 
   return (
@@ -138,29 +138,33 @@ export function Navbar() {
                       </div>
                       <div className="p-2">
                         <Link
-                          href="/dashboard/admin"
+                          href={user.role === 'admin' ? "/dashboard/admin" : "/dashboard/user"}
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
                         >
                           <LayoutDashboard className="w-4 h-4" />
                           Dashboard
                         </Link>
-                        <Link
-                          href="/items/add"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
-                        >
-                          <Plus className="w-4 h-4" />
-                          Add Product
-                        </Link>
-                        <Link
-                          href="/items/manage"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
-                        >
-                          <Settings className="w-4 h-4" />
-                          Manage Products
-                        </Link>
+                        {user.role === 'admin' && (
+                          <>
+                            <Link
+                              href="/items/add"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Add Product
+                            </Link>
+                            <Link
+                              href="/items/manage"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
+                            >
+                              <Settings className="w-4 h-4" />
+                              Manage Products
+                            </Link>
+                          </>
+                        )}
                         <button
                           onClick={() => {
                             logout();
@@ -249,29 +253,33 @@ export function Navbar() {
                         </p>
                       </div>
                       <Link
-                        href="/dashboard/admin"
+                        href={user.role === 'admin' ? "/dashboard/admin" : "/dashboard/user"}
                         onClick={() => setMobileMenuOpen(false)}
                         className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
                       >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
                       </Link>
-                      <Link
-                        href="/items/add"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add Product
-                      </Link>
-                      <Link
-                        href="/items/manage"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                      >
-                        <Settings className="w-4 h-4" />
-                        Manage Products
-                      </Link>
+                      {user.role === 'admin' && (
+                        <>
+                          <Link
+                            href="/items/add"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Add Product
+                          </Link>
+                          <Link
+                            href="/items/manage"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
+                          >
+                            <Settings className="w-4 h-4" />
+                            Manage Products
+                          </Link>
+                        </>
+                      )}
                       <button
                         onClick={() => {
                           logout();

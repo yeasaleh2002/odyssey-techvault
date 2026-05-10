@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGO_URI);
 
 const sampleProducts = [
   {
-    name: "iPhone 15 Pro",
+    title: "iPhone 15 Pro",
     shortDescription: "Titanium design with A17 Pro chip and advanced camera system.",
     fullDescription: "iPhone 15 Pro features a strong and light aerospace-grade titanium design with a textured matte-glass back. It's equipped with the A17 Pro chip, the most powerful chip ever in a smartphone, enabling console-quality gaming and advanced computational photography. The Pro camera system includes a 48MP Main camera with a new super-high-resolution 24MP default, a 3x Telephoto camera, and an Ultra Wide camera. Action button lets you quickly access your favorite feature.",
     price: 999,
@@ -30,7 +30,7 @@ const sampleProducts = [
     ]
   },
   {
-    name: "MacBook Air M3",
+    title: "MacBook Air M3",
     shortDescription: "Supercharged by M3 chip with up to 18 hours of battery life.",
     fullDescription: "MacBook Air with M3 chip is an extraordinarily portable laptop that's strikingly thin and brings an 8-core CPU and up to 10-core GPU.",
     price: 1099,
@@ -59,15 +59,17 @@ const importData = async () => {
 
     const createdUsers = await User.create([
       {
-        displayName: 'Admin User',
+        name: 'Admin User',
         email: 'admin@example.com',
         password: adminPassword,
+        firebaseUid: 'dummy_admin_firebase_uid_123',
         role: 'admin'
       },
       {
-        displayName: 'Demo User',
+        name: 'Demo User',
         email: 'user@example.com',
         password: userPassword,
+        firebaseUid: 'dummy_user_firebase_uid_456',
         role: 'user'
       }
     ]);
@@ -75,7 +77,7 @@ const importData = async () => {
     const adminUserId = createdUsers[0]._id;
 
     const productsToInsert = sampleProducts.map(product => {
-      return { ...product, userId: adminUserId };
+      return { ...product, createdBy: adminUserId };
     });
 
     await Product.create(productsToInsert);
