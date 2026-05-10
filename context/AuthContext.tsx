@@ -35,8 +35,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
       }
-    } catch (error) {
-      console.error("Error loading user profile", error);
+      // Only log non-401 errors, as 401 just means the user's session expired
+      if (error?.response?.status !== 401) {
+        console.error("Error loading user profile", error);
+      }
       setUser(null);
     } finally {
       setLoading(false);

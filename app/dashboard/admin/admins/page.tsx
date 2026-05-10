@@ -3,37 +3,37 @@
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { LoadingSpinner } from "@/components/shared";
-import { Trash2, User as UserIcon } from "lucide-react";
+import { Trash2, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 
-export default function ManageUsersPage() {
-  const [users, setUsers] = useState<any[]>([]);
+export default function ManageAdminsPage() {
+  const [admins, setAdmins] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchUsers = async () => {
+  const fetchAdmins = async () => {
     try {
-      const res = await api.get('/users?role=user');
-      setUsers(res.data.data);
+      const res = await api.get('/users?role=admin');
+      setAdmins(res.data.data);
     } catch (error) {
-      console.error("Failed to fetch users", error);
-      toast.error("Failed to load users");
+      console.error("Failed to fetch admins", error);
+      toast.error("Failed to load administrators");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchAdmins();
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    if (!window.confirm("Are you sure you want to delete this administrator?")) return;
     try {
       await api.delete(`/users/${id}`);
-      toast.success("User deleted successfully");
-      setUsers(users.filter(u => u._id !== id));
+      toast.success("Administrator deleted successfully");
+      setAdmins(admins.filter(a => a._id !== id));
     } catch (error: any) {
-      const msg = error.response?.data?.error || "Failed to delete user";
+      const msg = error.response?.data?.error || "Failed to delete administrator";
       toast.error(msg);
     }
   };
@@ -46,9 +46,9 @@ export default function ManageUsersPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Manage Users</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Manage Admins</h1>
           <p className="text-muted-foreground mt-2">
-            View and manage standard user accounts on the platform.
+            View and manage administrator accounts.
           </p>
         </div>
       </div>
@@ -65,30 +65,30 @@ export default function ManageUsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {users.length === 0 ? (
+              {admins.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
-                    No users found.
+                    No administrators found.
                   </td>
                 </tr>
               ) : (
-                users.map((user) => (
-                  <tr key={user._id} className="hover:bg-muted/50 transition-colors">
+                admins.map((admin) => (
+                  <tr key={admin._id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4 font-medium text-foreground flex items-center gap-3">
                       <div className="p-2 bg-primary/10 text-primary rounded-full">
-                        <UserIcon className="w-4 h-4" />
+                        <Shield className="w-4 h-4" />
                       </div>
-                      {user.name}
+                      {admin.name}
                     </td>
-                    <td className="px-6 py-4 text-muted-foreground">{user.email}</td>
+                    <td className="px-6 py-4 text-muted-foreground">{admin.email}</td>
                     <td className="px-6 py-4 text-muted-foreground">
-                      {new Date(user.createdAt).toLocaleDateString()}
+                      {new Date(admin.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
-                        onClick={() => handleDelete(user._id)}
+                        onClick={() => handleDelete(admin._id)}
                         className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                        title="Delete User"
+                        title="Delete Admin"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

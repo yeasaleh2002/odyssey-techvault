@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
+
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
@@ -83,7 +83,7 @@ export default function RootLayout({
             </CartProvider>
           </ThemeProvider>
         </AuthProvider>
-        {process.env.NODE_ENV === "production" && <Analytics />}
+
       </body>
     </html>
   );

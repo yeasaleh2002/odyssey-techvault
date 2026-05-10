@@ -54,6 +54,8 @@ app.use(cors({
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
+app.use('/api/stats', require('./routes/statsRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 // Error handling middleware
 app.use(require('./middleware/errorMiddleware'));

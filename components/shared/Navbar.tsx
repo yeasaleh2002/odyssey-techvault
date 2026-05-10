@@ -145,26 +145,7 @@ export function Navbar() {
                           <LayoutDashboard className="w-4 h-4" />
                           Dashboard
                         </Link>
-                        {user.role === 'admin' && (
-                          <>
-                            <Link
-                              href="/items/add"
-                              onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
-                            >
-                              <Plus className="w-4 h-4" />
-                              Add Product
-                            </Link>
-                            <Link
-                              href="/items/manage"
-                              onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
-                            >
-                              <Settings className="w-4 h-4" />
-                              Manage Products
-                            </Link>
-                          </>
-                        )}
+
                         <button
                           onClick={() => {
                             logout();
@@ -260,26 +241,7 @@ export function Navbar() {
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
                       </Link>
-                      {user.role === 'admin' && (
-                        <>
-                          <Link
-                            href="/items/add"
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                          >
-                            <Plus className="w-4 h-4" />
-                            Add Product
-                          </Link>
-                          <Link
-                            href="/items/manage"
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                          >
-                            <Settings className="w-4 h-4" />
-                            Manage Products
-                          </Link>
-                        </>
-                      )}
+
                       <button
                         onClick={() => {
                           logout();

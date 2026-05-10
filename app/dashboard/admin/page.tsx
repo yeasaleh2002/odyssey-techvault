@@ -15,39 +15,25 @@ const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
 const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false });
 const Line = dynamic(() => import('recharts').then(mod => mod.Line), { ssr: false });
+const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), { ssr: false });
+const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), { ssr: false });
+const Cell = dynamic(() => import('recharts').then(mod => mod.Cell), { ssr: false });
+const Legend = dynamic(() => import('recharts').then(mod => mod.Legend), { ssr: false });
 import { LoadingSpinner } from "@/components/shared";
-
-const revenueData = [
-  { name: "Jan", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Feb", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Mar", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Apr", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "May", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Jun", total: Math.floor(Math.random() * 5000) + 1000 },
-];
 
 export default function AdminDashboard() {
   const { user } = useAuth();
-  const [stats, setStats] = useState({ users: 0, products: 0 });
+  const [stats, setStats] = useState({
+    overview: { totalUsers: 0, totalAdmins: 0, totalProducts: 0, totalContacts: 0 },
+    charts: { productsByCategory: [], roleDistribution: [], userGrowth: [] }
+  });
   const [loading, setLoading] = useState(true);
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [usersRes, productsRes] = await Promise.all([
-          api.get('/auth/users'),
-          api.get('/products')
-        ]);
-
-        const usersData = usersRes.data;
-        const productsData = productsRes.data;
-
-        setStats({
-          users: usersData.count || 0,
-          products: productsData.total || 0,
-        });
+        const res = await api.get('/stats');
+        setStats(res.data.data);
       } catch (error) {
         console.error("Failed to fetch stats", error);
       } finally {
@@ -56,11 +42,13 @@ export default function AdminDashboard() {
     };
 
     fetchStats();
-  }, [API_URL]);
+  }, []);
 
   if (loading) {
     return <div className="flex justify-center items-center py-20"><LoadingSpinner size="lg" /></div>;
   }
+
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   return (
     <div className="space-y-6">
@@ -74,7 +62,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total Items</p>
-              <h3 className="text-2xl font-bold text-foreground">{stats.products}</h3>
+              <h3 className="text-2xl font-bold text-foreground">{stats.overview.totalProducts}</h3>
             </div>
           </div>
         </div>
@@ -86,7 +74,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total Users</p>
-              <h3 className="text-2xl font-bold text-foreground">{stats.users}</h3>
+              <h3 className="text-2xl font-bold text-foreground">{stats.overview.totalUsers}</h3>
             </div>
           </div>
         </div>
@@ -97,8 +85,8 @@ export default function AdminDashboard() {
               <DollarSign className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Revenue</p>
-              <h3 className="text-2xl font-bold text-foreground">$12,345</h3>
+              <p className="text-sm font-medium text-muted-foreground">Admins</p>
+              <h3 className="text-2xl font-bold text-foreground">{stats.overview.totalAdmins}</h3>
             </div>
           </div>
         </div>
@@ -109,8 +97,8 @@ export default function AdminDashboard() {
               <Activity className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Active Sessions</p>
-              <h3 className="text-2xl font-bold text-foreground">42</h3>
+              <p className="text-sm font-medium text-muted-foreground">Contacts / Queries</p>
+              <h3 className="text-2xl font-bold text-foreground">{stats.overview.totalContacts}</h3>
             </div>
           </div>
         </div>
@@ -118,31 +106,56 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="p-6 bg-card border border-border rounded-2xl shadow-sm">
-          <h2 className="text-xl font-semibold mb-6">Revenue Overview</h2>
+          <h2 className="text-xl font-semibold mb-6">Products by Category</h2>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={revenueData}>
+              <BarChart data={stats.charts.productsByCategory}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                 <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
-                <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className="p-6 bg-card border border-border rounded-2xl shadow-sm">
-          <h2 className="text-xl font-semibold mb-6">User Growth</h2>
+          <h2 className="text-xl font-semibold mb-6">User Growth (Last 6 Months)</h2>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={revenueData}>
+              <LineChart data={stats.charts.userGrowth}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                 <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
-                <Line type="monotone" dataKey="total" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="users" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 8 }} />
               </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="p-6 bg-card border border-border rounded-2xl shadow-sm lg:col-span-2">
+          <h2 className="text-xl font-semibold mb-6">Role Distribution</h2>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={stats.charts.roleDistribution}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {stats.charts.roleDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
+                <Legend verticalAlign="bottom" height={36}/>
+              </PieChart>
             </ResponsiveContainer>
           </div>
         </div>

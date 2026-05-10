@@ -5,10 +5,22 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Eye, Trash2, Package, Search, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import {
+  Plus,
+  Eye,
+  Trash2,
+  Package,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { SectionTitle, LoadingSpinner } from "@/components/shared";
-import { getProducts, deleteProduct as apiDeleteProduct } from "@/lib/services/product";
+import {
+  getProducts,
+  deleteProduct as apiDeleteProduct,
+} from "@/lib/services/product";
 import type { Product } from "@/types";
 import toast from "react-hot-toast";
 
@@ -24,10 +36,10 @@ export default function AdminManageItemsPage() {
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const data = await getProducts({ 
-        page, 
+      const data = await getProducts({
+        page,
         limit: 10,
-        keyword: searchQuery 
+        keyword: searchQuery,
       });
       if (data.success) {
         setProducts(data.data);
@@ -64,10 +76,12 @@ export default function AdminManageItemsPage() {
 
   const handleDelete = async (productId: string) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
-    
+
     try {
       await apiDeleteProduct(productId);
-      setProducts(products.filter((p) => (p.id || (p as any)._id) !== productId));
+      setProducts(
+        products.filter((p) => (p.id || (p as any)._id) !== productId),
+      );
       toast.success("Product deleted successfully");
     } catch (error) {
       toast.error("Failed to delete product");
@@ -108,11 +122,21 @@ export default function AdminManageItemsPage() {
           <table className="w-full text-left">
             <thead className="bg-muted/50">
               <tr>
-                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Product</th>
-                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Category</th>
-                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Price</th>
-                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Stock</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Product
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Category
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Price
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Stock
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -139,8 +163,12 @@ export default function AdminManageItemsPage() {
                             />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-foreground truncate max-w-[200px]">{product.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">{product.shortDescription}</p>
+                            <p className="font-semibold text-foreground truncate max-w-[200px]">
+                              {product.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {product.shortDescription}
+                            </p>
                           </div>
                         </div>
                       </td>
@@ -153,20 +181,26 @@ export default function AdminManageItemsPage() {
                         ${product.price.toLocaleString()}
                       </td>
                       <td className="px-6 py-4">
-                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-green-500">
-                           <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                           In Stock
-                         </span>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-green-500">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                          In Stock
+                        </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          <Link href={`/items/${id}`} className="p-2 text-muted-foreground hover:text-primary transition-colors">
+                          <Link
+                            href={`/items/${id}`}
+                            className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                          >
                             <Eye className="w-5 h-5" />
                           </Link>
-                          <Link href={`/items/edit/${id}`} className="p-2 text-muted-foreground hover:text-blue-500 transition-colors">
+                          <Link
+                            href={`/items/edit/${id}`}
+                            className="p-2 text-muted-foreground hover:text-blue-500 transition-colors"
+                          >
                             <Edit className="w-5 h-5" />
                           </Link>
-                          <button 
+                          <button
                             onClick={() => handleDelete(id)}
                             className="p-2 text-muted-foreground hover:text-destructive transition-colors"
                           >
@@ -206,8 +240,10 @@ export default function AdminManageItemsPage() {
 
       {!isLoading && products.length === 0 && (
         <div className="text-center py-20 bg-card border border-border rounded-2xl">
-           <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-           <p className="text-muted-foreground">No products found in the database.</p>
+          <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">
+            No products found in the database.
+          </p>
         </div>
       )}
     </div>

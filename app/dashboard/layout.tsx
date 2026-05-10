@@ -4,15 +4,17 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { 
-  LayoutDashboard, 
-  Package, 
-  Users, 
-  Settings, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Package,
+  Users,
+  Settings,
+  LogOut,
   User as UserIcon,
   ShoppingBag,
-  Heart
+  Heart,
+  Shield,
+  Plus,
 } from "lucide-react";
 import { LoadingSpinner } from "@/components/shared";
 
@@ -46,14 +48,16 @@ export default function DashboardLayout({
   const adminLinks = [
     { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/admin/users", label: "Manage Users", icon: Users },
-    { href: "/dashboard/admin/items", label: "Manage Items", icon: Package },
+    { href: "/dashboard/admin/admins", label: "Manage Admins", icon: Shield },
+    { href: "/items/add", label: "Add Product", icon: Plus },
+    { href: "/items/manage", label: "Manage Products", icon: Package },
     { href: "/dashboard/admin/settings", label: "Settings", icon: Settings },
   ];
 
   const userLinks = [
     { href: "/dashboard/user", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/user/orders", label: "My Orders", icon: ShoppingBag },
-    { href: "/dashboard/user/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/wishlist", label: "Wishlist", icon: Heart },
     { href: "/dashboard/user/profile", label: "Profile", icon: UserIcon },
     { href: "/dashboard/user/settings", label: "Settings", icon: Settings },
   ];
@@ -105,9 +109,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-8">
-        {children}
-      </main>
+      <main className="flex-1 p-6 md:p-8">{children}</main>
     </div>
   );
 }
