@@ -18,6 +18,9 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please add a price']
   },
+  originalPrice: {
+    type: Number
+  },
   category: {
     type: String,
     required: [true, 'Please add a category']
@@ -32,11 +35,36 @@ const ProductSchema = new mongoose.Schema({
     max: [5, 'Rating can not be more than 5'],
     default: 0
   },
+  reviews: {
+    type: Number,
+    default: 0
+  },
+  inStock: {
+    type: Boolean,
+    default: true
+  },
+  featured: {
+    type: Boolean,
+    default: false
+  },
+  deal: {
+    type: Boolean,
+    default: false
+  },
+  specifications: [
+    {
+      label: { type: String },
+      value: { type: String }
+    }
+  ],
   createdBy: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true
   }
 }, { timestamps: true });
+
+// Text index for search
+ProductSchema.index({ title: 'text', shortDescription: 'text', category: 'text' });
 
 module.exports = mongoose.model('Product', ProductSchema);

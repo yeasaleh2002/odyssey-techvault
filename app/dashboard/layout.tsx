@@ -14,7 +14,8 @@ import {
   ShoppingBag,
   Heart,
   Shield,
-  Plus,
+  ShoppingCart,
+  ClipboardList,
 } from "lucide-react";
 import { LoadingSpinner } from "@/components/shared";
 
@@ -47,6 +48,8 @@ export default function DashboardLayout({
 
   const adminLinks = [
     { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
+    { href: "/dashboard/admin/orders", label: "Orders", icon: ClipboardList },
+    { href: "/dashboard/admin/products", label: "Manage Products", icon: Package },
     { href: "/dashboard/admin/users", label: "Manage Users", icon: Users },
     { href: "/dashboard/admin/admins", label: "Manage Admins", icon: Shield },
     { href: "/dashboard/admin/settings", label: "Settings", icon: Settings },
@@ -55,7 +58,8 @@ export default function DashboardLayout({
   const userLinks = [
     { href: "/dashboard/user", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/user/orders", label: "My Orders", icon: ShoppingBag },
-    { href: "/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/dashboard/user/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/dashboard/user/cart", label: "My Cart", icon: ShoppingCart },
     { href: "/dashboard/user/profile", label: "Profile", icon: UserIcon },
     { href: "/dashboard/user/settings", label: "Settings", icon: Settings },
   ];
@@ -72,7 +76,7 @@ export default function DashboardLayout({
           </h2>
           <p className="text-sm text-muted-foreground truncate">{user.email}</p>
         </div>
-        <nav className="flex-1 px-4 space-y-2">
+        <nav className="flex-1 px-4 space-y-1">
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;

@@ -9,3 +9,8 @@ export const toggleWishlist = async (productId: string) => {
   const response = await api.post('/wishlist', { productId });
   return response.data;
 };
+
+export const removeFromWishlist = async (productId: string) => {
+  const response = await api.delete(`/wishlist/${productId}`);
+  return response.data;
+};
