@@ -65,15 +65,24 @@ export default function LoginPage() {
 
 
 
-          <div className="flex justify-center mb-6">
+          <div className="grid grid-cols-2 gap-3 mb-8">
             <button
               onClick={() => {
                 setEmail("user@example.com");
                 setPassword("user123");
               }}
-              className="px-6 py-2 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-medium hover:bg-primary/20 transition-colors"
+              className="px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-xs font-semibold hover:bg-primary/20 transition-colors"
             >
-              Demo User Auto-Fill
+              Demo User
+            </button>
+            <button
+              onClick={() => {
+                setEmail("admin@example.com");
+                setPassword("admin123");
+              }}
+              className="px-4 py-2.5 bg-purple-500/10 text-purple-600 border border-purple-500/20 rounded-xl text-xs font-semibold hover:bg-purple-500/20 transition-colors"
+            >
+              Demo Admin
             </button>
           </div>
 
